@@ -7,7 +7,7 @@
 
 namespace {
 
-    // "Магическое" число, используемое для отслеживания живости объекта
+	// "РњР°РіРёС‡РµСЃРєРѕРµ" С‡РёСЃР»Рѕ, РёСЃРїРѕР»СЊР·СѓРµРјРѕРµ РґР»СЏ РѕС‚СЃР»РµР¶РёРІР°РЅРёСЏ Р¶РёРІРѕСЃС‚Рё РѕР±СЉРµРєС‚Р°
     inline const uint32_t DEFAULT_COOKIE = 0xdeadbeef;
 
     struct TestObj {
@@ -36,20 +36,20 @@ namespace {
         }
 
         explicit Obj(int id)
-            : id(id)  //
+            : id(id)
         {
             ++num_constructed_with_id;
         }
 
         Obj(int id, std::string name)
             : id(id)
-            , name(std::move(name))  //
+            , name(std::move(name))
         {
             ++num_constructed_with_id_and_name;
         }
 
         Obj(const Obj& other)
-            : id(other.id)  //
+            : id(other.id)
         {
             if (other.throw_on_copy) {
                 throw std::runtime_error("Oops");
@@ -58,7 +58,7 @@ namespace {
         }
 
         Obj(Obj&& other) noexcept
-            : id(other.id)  //
+            : id(other.id)
         {
             ++num_moved;
         }
@@ -359,8 +359,8 @@ void Test4() {
     {
         Vector<TestObj> v(1);
         assert(v.Size() == v.Capacity());
-        // Операция PushBack существующего элемента вектора должна быть безопасна
-        // даже при реаллокации памяти
+        // РћРїРµСЂР°С†РёСЏ PushBack СЃСѓС‰РµСЃС‚РІСѓСЋС‰РµРіРѕ СЌР»РµРјРµРЅС‚Р° РІРµРєС‚РѕСЂР° РґРѕР»Р¶РЅР° Р±С‹С‚СЊ Р±РµР·РѕРїР°СЃРЅР°
+	    // РґР°Р¶Рµ РїСЂРё СЂРµР°Р»Р»РѕРєР°С†РёРё РїР°РјРёРё
         v.PushBack(v[0]);
         assert(v[0].IsAlive());
         assert(v[1].IsAlive());
@@ -368,8 +368,8 @@ void Test4() {
     {
         Vector<TestObj> v(1);
         assert(v.Size() == v.Capacity());
-        // Операция PushBack для перемещения существующего элемента вектора должна быть безопасна
-        // даже при реаллокации памяти
+        // РћРїРµСЂР°С†РёСЏ PushBack РґР»СЏ РїРµСЂРµРјРµС‰РµРЅРёСЏ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РµРіРѕ СЌР»РµРјРµРЅС‚Р° РІРµРєС‚РѕСЂР° РґРѕР»Р¶РЅР° Р±С‹С‚СЊ Р±РµР·РѕРїР°СЃРЅР°
+		// РґР°Р¶Рµ РїСЂРё СЂРµР°Р»Р»РѕРєР°С†РёРё РїР°РјСЏС‚Рё
         v.PushBack(std::move(v[0]));
         assert(v[0].IsAlive());
         assert(v[1].IsAlive());
@@ -402,8 +402,8 @@ void Test5() {
     {
         Vector<TestObj> v(1);
         assert(v.Size() == v.Capacity());
-        // Операция EmplaceBack существующего элемента вектора должна быть безопасна
-        // даже при реаллокации памяти
+        // РћРїРµСЂР°С†РёСЏ EmplaceBack СЃСѓС‰РµСЃС‚РІСѓСЋС‰РµРіРѕ СЌР»РµРјРµРЅС‚Р° РІРµРєС‚РѕСЂР° РґРѕР»Р¶РЅР° Р±С‹С‚СЊ Р±РµР·РѕРїР°СЃРЅР°
+		// РґР°Р¶Рµ РїСЂРё СЂРµР°Р»Р»РѕРєР°С†РёРё РїР°РјСЏС‚Рё
         v.EmplaceBack(v[0]);
         assert(v[0].IsAlive());
         assert(v[1].IsAlive());
@@ -670,12 +670,15 @@ void Benchmark() {
 
 int main() {
     try {
+    	std::cout<< "Start tests"<<std::endl;
         Test1();
         Test2();
         Test3();
         Test4();
         Test5();
         Test6();
+        std::cout<< "Test OK"<<std::endl;
+        std::cout<< "Start Benchmark"<<std::endl;
         Benchmark();
     }
     catch (const std::exception& e) {

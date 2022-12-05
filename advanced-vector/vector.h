@@ -46,7 +46,7 @@ public:
     }
 
     T* operator+(size_t offset) noexcept {
-        // Разрешается получать адрес ячейки памяти, следующей за последним элементом массива
+    	// Р Р°Р·СЂРµС€Р°РµС‚СЃСЏ РїРѕР»СѓС‡Р°С‚СЊ Р°РґСЂРµСЃ СЏС‡РµР№РєРё РїР°РјСЏС‚Рё, СЃР»РµРґСѓСЋС‰РµР№ Р·Р° РїРѕСЃР»РµРґРЅРёРј СЌР»РµРјРµРЅС‚РѕРј РјР°СЃСЃРёРІР°
         assert(offset <= capacity_);
         return buffer_ + offset;
     }
@@ -82,12 +82,12 @@ public:
     }
 
 private:
-    // Выделяет сырую память под n элементов и возвращает указатель на неё
+    // Р’С‹РґРµР»СЏРµС‚ СЃС‹СЂСѓСЋ РїР°РјСЏС‚СЊ РїРѕРґ n СЌР»РµРјРµРЅС‚РѕРІ Рё РІРѕР·РІСЂР°С‰Р°РµС‚ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РЅРµС‘
     static T* Allocate(size_t n) {
         return n != 0 ? static_cast<T*>(operator new(n * sizeof(T))) : nullptr;
     }
 
-    // Освобождает сырую память, выделенную ранее по адресу buf при помощи Allocate
+    // РћСЃРІРѕР±РѕР¶РґР°РµС‚ СЃС‹СЂСѓСЋ РїР°РјСЏС‚СЊ, РІС‹РґРµР»РµРЅРЅСѓСЋ СЂР°РЅРµРµ РїРѕ Р°РґСЂРµСЃСѓ buf РїСЂРё РїРѕРјРѕС‰Рё Allocate
     static void Deallocate(T* buf) noexcept {
         operator delete(buf);
     }
@@ -106,14 +106,14 @@ public:
 
     explicit Vector(size_t size)
         : data_(size)
-        , size_(size)  //
+        , size_(size)
     {
         std::uninitialized_value_construct_n(data_.GetAddress(), size);
     }
 
     Vector(const Vector& other)
         : data_(other.size_)
-        , size_(other.size_)  //
+        , size_(other.size_)
     {
         std::uninitialized_copy_n(other.data_.GetAddress(), other.size_, data_.GetAddress());
     }
@@ -221,7 +221,7 @@ public:
         ++size_;
     }
 
-    void PopBack() /* noexcept */ {
+    void PopBack(){
         std::destroy_n(data_.GetAddress() + size_ - 1, 1);
         --size_;
     }
@@ -280,15 +280,7 @@ public:
                 if (end() != begin()) {
                     T temp(std::forward<Args>(args)...);
                     new(end()) T(std::forward<T>(*(end() - 1)));
-
-                    //Why I must use move_backward, even if move_construct may throw eror?*****************************************
-                    // 
-                    //if constexpr (std::is_nothrow_move_constructible_v<T> || !std::is_copy_constructible_v<T>) {
-                        std::move_backward(begin() + position, end() - 1, end());
-                   // }
-                   // else {
-                    //    std::copy_backward(pos, cend() - 1, end());
-                    //}
+                    std::move_backward(begin() + position, end() - 1, end());
                     data_[position] = std::forward<T>(temp);
                 }
                 else {
@@ -299,7 +291,7 @@ public:
         ++size_;
         return begin() + position;
     }
-    iterator Erase(const_iterator pos) /*noexcept(std::is_nothrow_move_assignable_v<T>)*/ {
+    iterator Erase(const_iterator pos){
         size_t position = pos - begin();
         std::move(begin() + position + 1, end(), begin() + position);
         std::destroy_n(end()-1, 1);
@@ -349,11 +341,11 @@ private:
     }
 
     void ReplacingOldMemory(RawMemory<T>& new_data) {
-        // Разрушаем элементы в data_
+    	// Р Р°Р·СЂСѓС€Р°РµРј СЌР»РµРјРµРЅС‚С‹ РІ data_
         std::destroy_n(data_.GetAddress(), size_);
-        // Избавляемся от старой сырой памяти, обменивая её на новую
+        // РР·Р±Р°РІР»СЏРµРјСЃСЏ РѕС‚ СЃС‚Р°СЂРѕР№ СЃС‹СЂРѕР№ РїР°РјСЏС‚Рё, РѕР±РјРµРЅРёРІР°СЏ РµС‘ РЅР° РЅРѕРІСѓСЋ
         data_.Swap(new_data);
-        // При выходе из метода старая память будет возвращена в кучу
+        // РџСЂРё РІС‹С…РѕРґРµ РёР· РјРµС‚РѕРґР° СЃС‚Р°СЂР°СЏ РїР°РјСЏС‚СЊ Р±СѓРґРµС‚ РІРѕР·РІСЂР°С‰РµРЅР° РІ РєСѓС‡Сѓ
     }
 
 };
